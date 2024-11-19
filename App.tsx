@@ -1,13 +1,18 @@
-import {StatusBar} from "expo-status-bar";
-import {useCallback} from "react";
-import {HomeBackground} from "./src/components/HomeBackground";
-import {WeatherInfo, WeatherInfoProps} from "./src/components/section/WeatherInfo";
-import {WeatherTabBar} from "./src/components/tabbar/WeatherTabBar";
-import * as SplashScreen from 'expo-splash-screen'
-import {useFonts} from "expo-font";
-import {SafeAreaProvider} from "react-native-safe-area-context";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import { useCallback } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { HomeBackground } from "./src/components/HomeBackground";
+import {
+  WeatherInfo,
+  WeatherInfoProps,
+} from "./src/components/section/WeatherInfo";
+import { ForecastSheet } from "./src/components/sheet/ForecastSheet";
+import { WeatherTabBar } from "./src/components/tabbar/WeatherTabBar";
 
-SplashScreen.preventAutoHideAsync()
+SplashScreen.preventAutoHideAsync();
 
 const weatherData: WeatherInfoProps = {
   weather: {
@@ -15,33 +20,36 @@ const weatherData: WeatherInfoProps = {
     temperature: 19,
     condition: "Sunny",
     high: 24,
-    low: 14
-  }
-}
+    low: 14,
+  },
+};
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    'SF-Thin': require('./src/assets/fonts/SF-Pro-Display-Thin.otf'),
-    'SF-Regular': require('./src/assets/fonts/SF-Pro-Display-Regular.otf'),
-    'SF-Semibold': require('./src/assets/fonts/SF-Pro-Display-Semibold.otf'),
-  })
+    "SF-Thin": require("./src/assets/fonts/SF-Pro-Display-Thin.otf"),
+    "SF-Regular": require("./src/assets/fonts/SF-Pro-Display-Regular.otf"),
+    "SF-Semibold": require("./src/assets/fonts/SF-Pro-Display-Semibold.otf"),
+  });
 
   const onLayoutRooView = useCallback(() => {
     if (fontsLoaded) {
-      SplashScreen.hideAsync()
+      SplashScreen.hideAsync();
     }
-  }, [fontsLoaded])
+  }, [fontsLoaded]);
 
-  if (!fontsLoaded) return null
+  if (!fontsLoaded) return null;
 
-  const {weather} = weatherData
+  const { weather } = weatherData;
 
   return (
     <SafeAreaProvider onLayout={onLayoutRooView}>
-      <HomeBackground/>
-      <WeatherInfo weather={weather}/>
-      <WeatherTabBar/>
-      <StatusBar style="light"/>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <HomeBackground />
+        <WeatherInfo weather={weather} />
+        <ForecastSheet />
+        <WeatherTabBar />
+        <StatusBar style="light" />
+      </GestureHandlerRootView>
     </SafeAreaProvider>
   );
 }

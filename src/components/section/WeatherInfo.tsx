@@ -1,7 +1,7 @@
-import {StyleSheet, Text, View} from "react-native";
-import {Weather} from "../../models/Weather";
-import {DEGREE_SYMBOL} from "../../utils/Constants";
-import {useSafeAreaInsets} from "react-native-safe-area-context";
+import { StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Weather } from "../../models/Weather";
+import { DEGREE_SYMBOL } from "../../utils/Constants";
 
 export interface WeatherInfoProps {
   weather: Weather;
