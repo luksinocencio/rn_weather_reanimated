@@ -1,24 +1,77 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Canvas, Line, LinearGradient, vec } from "@shopify/react-native-skia";
+import { Fragment, useState } from "react";
+import {
+  LayoutChangeEvent,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export function ForecastControl() {
+  const [textWidth, setTextWidth] = useState(0);
+  const spacingX = 32;
+  const strokeWidth = 3;
+
+  const myStyles = styles({ textWidth, spacingX, strokeWidth });
+
+  function onTextLayout(event: LayoutChangeEvent) {
+    setTextWidth(event.nativeEvent.layout.width);
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.forecastText}>Hourly Forecast</Text>
-      <Text style={styles.forecastText}>Weekly Forecast</Text>
-    </View>
+    <Fragment>
+      <View style={myStyles.container}>
+        <TouchableOpacity>
+          <Text onLayout={onTextLayout} style={myStyles.forecastText}>
+            Hourly Forecast
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Text style={myStyles.forecastText}>Weekly Forecast</Text>
+        </TouchableOpacity>
+      </View>
+      <Canvas style={myStyles.canvasContainer}>
+        <Line p1={vec(0, 0)} p2={vec(textWidth, 0)} strokeWidth={strokeWidth}>
+          <LinearGradient
+            start={vec(0, 0)}
+            end={vec(textWidth, 0)}
+            colors={[
+              "rgba(147,112,177,0)",
+              "rgba(147,112,177,1)",
+              "rgba(147,112,177,0)",
+            ]}
+          />
+        </Line>
+      </Canvas>
+    </Fragment>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-  },
-  forecastText: {
-    fontFamily: "SF-Semibold",
-    fontSize: 16,
-    lineHeight: 20,
-    color: "rgba(235,235,245,0.6)",
-  },
-});
+const styles = ({
+  textWidth,
+  spacingX,
+  strokeWidth,
+}: {
+  textWidth: number;
+  spacingX: number;
+  strokeWidth: number;
+}) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      paddingHorizontal: 20,
+    },
+    forecastText: {
+      fontFamily: "SF-Semibold",
+      fontSize: 16,
+      lineHeight: 20,
+      color: "rgba(235,235,245,0.6)",
+    },
+    canvasContainer: {
+      height: strokeWidth,
+      width: textWidth,
+      marginLeft: spacingX,
+    },
+  });

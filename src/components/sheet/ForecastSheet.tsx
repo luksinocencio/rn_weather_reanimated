@@ -1,14 +1,19 @@
-import BottomSheet from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import React from "react";
+
 import { useApplicationDimensions } from "../../hooks/useApplicationDimensions";
 import { ForecastSheetBackground } from "./ForecastSheetBackground";
 import { ForecastControl } from "./elements/ForecastControl";
+import { Separator } from "./elements/Separator";
 
 export function ForecastSheet() {
   const { width, height } = useApplicationDimensions();
   const snapPoints = ["38.5%", "83%"];
   const firstSnapPoint = height * (parseFloat(snapPoints[0]) / 100);
   const cornerRadius = 44;
+  const capsuleRadius = 30;
+  const capsuleHeight = height * 0.17;
+  const capsuleWidth = width * 0.15;
 
   return (
     <BottomSheet
@@ -26,9 +31,10 @@ export function ForecastSheet() {
         />
       )}
     >
-      <>
+      <BottomSheetView style={{ flex: 1 }}>
         <ForecastControl />
-      </>
+        <Separator width={width} height={3} />
+      </BottomSheetView>
     </BottomSheet>
   );
 }
