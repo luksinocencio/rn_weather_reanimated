@@ -1,8 +1,8 @@
 import { Canvas, RoundedRect, Shadow } from "@shopify/react-native-skia";
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
-import { Forecast } from "../../models/Weather";
-import { convertDate12HrFormat } from "../../utils/DateHelper";
+import { Forecast, ForecastType } from "../../models/Weather";
+import { convertDate12HrFormat, getDayOfWeek } from "../../utils/DateHelper";
 
 interface ForecastCapsuleProps {
   forecast: Forecast;
@@ -17,9 +17,25 @@ export function ForecastCapsule({
   height,
   radius,
 }: ForecastCapsuleProps) {
-  const { date, icon, probability, temperature } = forecast;
-  const timeToDisplay = convertDate12HrFormat(date);
-  const capsuleOpacity = timeToDisplay.toLowerCase() === "now" ? 1 : 0.2;
+  const { date, icon, probability, temperature, type } = forecast;
+
+  const timeDateOpacityDisplay = (): [string, number] => {
+    let opacity = 0;
+    let timeOrDay = "";
+
+    if (type === ForecastType.Hourly) {
+      timeOrDay = convertDate12HrFormat(date);
+      opacity = 1;
+    } else {
+      const [dayOfWeek, isToday] = getDayOfWeek(date);
+      timeOrDay = dayOfWeek;
+      opacity = isToday ? 1 : 0.2;
+    }
+
+    return [timeOrDay, opacity];
+  };
+
+  const [timeToDisplay, opacity] = timeDateOpacityDisplay();
   const probabilityValue = probability ? probability : 0;
 
   const myStyles = styles({ width, height });
@@ -33,7 +49,7 @@ export function ForecastCapsule({
           width={width}
           height={height}
           r={radius}
-          color={`rgba(72,49,157, ${capsuleOpacity})`}
+          color={`rgba(72,49,157, ${opacity})`}
         >
           <Shadow
             dx={1}

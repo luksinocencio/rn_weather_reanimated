@@ -37,6 +37,7 @@ export function ForecastScroll({
 const styles = StyleSheet.create({
   scrollView: {
     paddingLeft: 20,
+    paddingRight: 20,
     paddingTop: 20,
     paddingBottom: 10,
   },
