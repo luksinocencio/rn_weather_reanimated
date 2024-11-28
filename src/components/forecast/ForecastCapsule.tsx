@@ -24,7 +24,14 @@ export function ForecastCapsule({
   return (
     <View style={myStyles.container}>
       <Canvas style={{ ...StyleSheet.absoluteFillObject }}>
-        <RoundedRect x={0} y={0} width={width} height={height} r={radius}>
+        <RoundedRect
+          x={0}
+          y={0}
+          width={width}
+          height={height}
+          r={radius}
+          color="rgba(72,49,157,1)"
+        >
           <Shadow
             dx={1}
             dy={1}

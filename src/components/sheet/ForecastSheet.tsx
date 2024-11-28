@@ -1,7 +1,9 @@
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback, useRef } from "react";
 
+import { hourly } from "../../data/ForecastData";
 import { useApplicationDimensions } from "../../hooks/useApplicationDimensions";
+import { ForecastScroll } from "../forecast/ForecastScroll";
 import { ForecastSheetBackground } from "./ForecastSheetBackground";
 import { ForecastControl } from "./elements/ForecastControl";
 import { Separator } from "./elements/Separator";
@@ -42,6 +44,12 @@ export function ForecastSheet() {
       <BottomSheetView style={{ flex: 1 }}>
         <ForecastControl />
         <Separator width={width} height={3} />
+        <ForecastScroll
+          capsuleWidth={capsuleWidth}
+          capsuleHeight={capsuleHeight}
+          capsuleRadius={capsuleRadius}
+          forecasts={hourly}
+        />
       </BottomSheetView>
     </BottomSheet>
   );
