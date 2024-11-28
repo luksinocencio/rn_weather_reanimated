@@ -7,8 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { ForecastType } from "../../../models/Weather";
 
-export function ForecastControl() {
+interface ForecastControlProps {
+  onPress: (forecastType: ForecastType) => void;
+}
+
+export function ForecastControl({ onPress }: ForecastControlProps) {
   const [textWidth, setTextWidth] = useState(0);
   const spacingX = 32;
   const strokeWidth = 3;
@@ -22,12 +27,12 @@ export function ForecastControl() {
   return (
     <Fragment>
       <View style={myStyles.container}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => onPress(ForecastType.Hourly)}>
           <Text onLayout={onTextLayout} style={myStyles.forecastText}>
             Hourly Forecast
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => onPress(ForecastType.Weekly)}>
           <Text style={myStyles.forecastText}>Weekly Forecast</Text>
         </TouchableOpacity>
       </View>

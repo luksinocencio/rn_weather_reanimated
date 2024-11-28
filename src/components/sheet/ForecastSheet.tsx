@@ -1,8 +1,9 @@
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
-import { hourly } from "../../data/ForecastData";
+import { hourly, weekly } from "../../data/ForecastData";
 import { useApplicationDimensions } from "../../hooks/useApplicationDimensions";
+import { ForecastType } from "../../models/Weather";
 import { ForecastScroll } from "../forecast/ForecastScroll";
 import { ForecastSheetBackground } from "./ForecastSheetBackground";
 import { ForecastControl } from "./elements/ForecastControl";
@@ -17,6 +18,8 @@ export function ForecastSheet() {
   const capsuleRadius = 30;
   const capsuleHeight = height * 0.17;
   const capsuleWidth = width * 0.15;
+  const [selectedForecastType, setSelectedForecastType] =
+    useState<ForecastType>(ForecastType.Hourly);
 
   // callbacks
   const handleSheetChanges = useCallback((index: number) => {
@@ -42,13 +45,15 @@ export function ForecastSheet() {
       onChange={handleSheetChanges}
     >
       <BottomSheetView style={{ flex: 1 }}>
-        <ForecastControl />
+        <ForecastControl onPress={(type) => setSelectedForecastType(type)} />
         <Separator width={width} height={3} />
         <ForecastScroll
           capsuleWidth={capsuleWidth}
           capsuleHeight={capsuleHeight}
           capsuleRadius={capsuleRadius}
-          forecasts={hourly}
+          forecasts={
+            selectedForecastType === ForecastType.Hourly ? hourly : weekly
+          }
         />
       </BottomSheetView>
     </BottomSheet>

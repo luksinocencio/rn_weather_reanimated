@@ -19,6 +19,9 @@ export function ForecastCapsule({
 }: ForecastCapsuleProps) {
   const { date, icon, probability, temperature } = forecast;
   const timeToDisplay = convertDate12HrFormat(date);
+  const capsuleOpacity = timeToDisplay.toLowerCase() === "now" ? 1 : 0.2;
+  const probabilityValue = probability ? probability : 0;
+
   const myStyles = styles({ width, height });
 
   return (
@@ -30,7 +33,7 @@ export function ForecastCapsule({
           width={width}
           height={height}
           r={radius}
-          color="rgba(72,49,157,1)"
+          color={`rgba(72,49,157, ${capsuleOpacity})`}
         >
           <Shadow
             dx={1}
@@ -46,7 +49,9 @@ export function ForecastCapsule({
         <Text style={myStyles.time}>{timeToDisplay}</Text>
         <View>
           <Image source={icon} style={myStyles.image} />
-          <Text style={myStyles.probality}>{probability}%</Text>
+          <Text style={[myStyles.probality, { opacity: probabilityValue }]}>
+            {probability}%
+          </Text>
         </View>
         <Text style={myStyles.temperature}>{temperature}</Text>
       </View>
