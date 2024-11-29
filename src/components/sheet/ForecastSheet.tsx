@@ -19,6 +19,7 @@ import WindWidget from "../forecast/widgets/WindWidget";
 import { ForecastSheetBackground } from "./ForecastSheetBackground";
 import { ForecastControl } from "./elements/ForecastControl";
 import { Separator } from "./elements/Separator";
+import {useAnimatedReaction, useSharedValue} from "react-native-reanimated";
 
 export function ForecastSheet() {
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -31,8 +32,16 @@ export function ForecastSheet() {
   const capsuleWidth = width * 0.15;
   const [selectedForecastType, setSelectedForecastType] =
     useState<ForecastType>(ForecastType.Hourly);
+  const currentPosition = useSharedValue(0)
 
   const smallWidgetSize = width * 0.4;
+  
+  useAnimatedReaction(() => {
+    return currentPosition.value;
+  }, (cv) => {
+    console.log(cv)
+  })
+  
 
   // callbacks
   const handleSheetChanges = useCallback((index: number) => {
@@ -42,6 +51,8 @@ export function ForecastSheet() {
   return (
     <BottomSheet
       snapPoints={snapPoints}
+      animatedPosition={currentPosition}
+      animateOnMount={false}
       handleIndicatorStyle={{
         width: 48,
         height: 5,
