@@ -19,7 +19,7 @@ const weatherData: WeatherInfoProps = {
   },
 };
 
-export default function App() {
+export function App() {
   const [fontsLoaded] = useFonts({
     "SF-Thin": require("./src/assets/fonts/SF-Pro-Display-Thin.otf"),
     "SF-Regular": require("./src/assets/fonts/SF-Pro-Display-Regular.otf"),
@@ -43,3 +43,21 @@ export default function App() {
     </SafeAreaProvider>
   );
 }
+
+// import React from "react";
+// import { StyleSheet } from "react-native";
+// import { BasicAnimations } from "./src/screens/BasicAnimations";
+
+// interface AppProps {}
+
+// export function App({}: AppProps) {
+//   return <BasicAnimations />;
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     justifyContent: "center",
+//     alignItems: "center",
+//   },
+// });
