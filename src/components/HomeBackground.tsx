@@ -1,14 +1,9 @@
-import {
-  Canvas,
-  LinearGradient,
-  Rect,
-  SkiaDomView,
-  vec,
-} from "@shopify/react-native-skia";
+import { Canvas, LinearGradient, Rect, vec } from "@shopify/react-native-skia";
 import React from "react";
 import {
   Image,
   ImageBackground,
+  Platform,
   ScaledSize,
   StyleSheet,
   View,
@@ -17,7 +12,6 @@ import Animated, {
   Extrapolation,
   interpolate,
   interpolateColor,
-  useAnimatedReaction,
   useAnimatedRef,
   useAnimatedStyle,
   useDerivedValue,
@@ -33,15 +27,21 @@ export function HomeBackground() {
   const smokeHeight = height * 0.6;
   const smokeOffsetY = height * 0.4;
   const animatedPosition = useForecastSheetPosition();
-  const containerRef = useAnimatedRef<SkiaDomView>();
+  const containerRef = useAnimatedRef<any>();
+
   const leftBkgColor = useSharedValue("#2e3354");
   const rightBkgColor = useSharedValue("#1c1b33");
+
   const bkgColors = useDerivedValue(() => {
-    leftBkgColor.value = interpolateColor(
-      animatedPosition.value,
-      [0, 1],
-      ["#2e3354", "#422E5a"],
-    );
+    if (Platform.OS === "ios") {
+      leftBkgColor.value = interpolateColor(
+        animatedPosition.value,
+        [0, 1],
+        ["#2e3354", "#422E5a"],
+      );
+    } else {
+      leftBkgColor.value = animatedPosition.value > 0.5 ? "#422E5a" : "#2e3354";
+    }
 
     return [leftBkgColor.value, rightBkgColor.value];
   });
@@ -77,14 +77,14 @@ export function HomeBackground() {
     };
   });
 
-  useAnimatedReaction(
-    () => {
-      return animatedPosition.value;
-    },
-    (cv) => {
-      console.log(cv);
-    },
-  );
+  // useAnimatedReaction(
+  //   () => {
+  //     return animatedPosition.value;
+  //   },
+  //   (cv) => {
+  //     console.log(cv);
+  //   },
+  // );
 
   return (
     <View style={{ ...StyleSheet.absoluteFillObject }}>
@@ -102,8 +102,8 @@ export function HomeBackground() {
         resizeMode="cover"
         style={[myStyles.imageBackground, animatedImgBkgStyles]}
       >
-        <AnimatedCanvas
-          ref={containerRef}
+        <Canvas
+          ref={containerRef || undefined}
           style={[
             animatedCanvasSmokeStyles,
             {
@@ -121,7 +121,7 @@ export function HomeBackground() {
               positions={[-0.02, 0.54]}
             />
           </Rect>
-        </AnimatedCanvas>
+        </Canvas>
         <Image
           source={require("../assets/home/House.png")}
           resizeMode="cover"

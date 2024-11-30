@@ -1,5 +1,5 @@
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -53,11 +53,6 @@ export function ForecastSheet() {
     },
   );
 
-  // callbacks
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index);
-  }, []);
-
   return (
     <BottomSheet
       snapPoints={snapPoints}
@@ -75,8 +70,6 @@ export function ForecastSheet() {
           cornerRadius={cornerRadius}
         />
       )}
-      ref={bottomSheetRef}
-      onChange={handleSheetChanges}
     >
       <BottomSheetView style={{ flex: 1 }}>
         <ForecastControl onPress={(type) => setSelectedForecastType(type)} />
