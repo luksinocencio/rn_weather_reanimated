@@ -1,4 +1,10 @@
-import { Canvas, LinearGradient, Rect, vec } from "@shopify/react-native-skia";
+import {
+  Canvas,
+  LinearGradient,
+  Rect,
+  SkiaDomView,
+  vec,
+} from "@shopify/react-native-skia";
 import React from "react";
 import {
   Image,
@@ -10,9 +16,12 @@ import {
 import Animated, {
   Extrapolation,
   interpolate,
+  interpolateColor,
   useAnimatedReaction,
   useAnimatedRef,
   useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
 } from "react-native-reanimated";
 import { useForecastSheetPosition } from "../context/ForecastSheetContext";
 import { useApplicationDimensions } from "../hooks/useApplicationDimensions";
@@ -24,7 +33,18 @@ export function HomeBackground() {
   const smokeHeight = height * 0.6;
   const smokeOffsetY = height * 0.4;
   const animatedPosition = useForecastSheetPosition();
-  const containerRef = useAnimatedRef<Animated.View>();
+  const containerRef = useAnimatedRef<SkiaDomView>();
+  const leftBkgColor = useSharedValue("#2e3354");
+  const rightBkgColor = useSharedValue("#1c1b33");
+  const bkgColors = useDerivedValue(() => {
+    leftBkgColor.value = interpolateColor(
+      animatedPosition.value,
+      [0, 1],
+      ["#2e3354", "#422E5a"],
+    );
+
+    return [leftBkgColor.value, rightBkgColor.value];
+  });
 
   const AnimatedImgBkg = Animated.createAnimatedComponent(ImageBackground);
   const AnimatedCanvas = Animated.createAnimatedComponent(Canvas);
@@ -73,7 +93,7 @@ export function HomeBackground() {
           <LinearGradient
             start={vec(0, 0)}
             end={vec(width, height)}
-            colors={["#2e335a", "#1c1b33"]}
+            colors={bkgColors}
           />
         </Rect>
       </Canvas>
@@ -82,7 +102,8 @@ export function HomeBackground() {
         resizeMode="cover"
         style={[myStyles.imageBackground, animatedImgBkgStyles]}
       >
-        <Canvas
+        <AnimatedCanvas
+          ref={containerRef}
           style={[
             animatedCanvasSmokeStyles,
             {
@@ -100,7 +121,7 @@ export function HomeBackground() {
               positions={[-0.02, 0.54]}
             />
           </Rect>
-        </Canvas>
+        </AnimatedCanvas>
         <Image
           source={require("../assets/home/House.png")}
           resizeMode="cover"
