@@ -3,6 +3,8 @@ import React, { useCallback, useRef, useState } from "react";
 
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { useAnimatedReaction, useSharedValue } from "react-native-reanimated";
+import { useForecastSheetPosition } from "../../context/ForecastSheetContext";
 import { hourly, weekly } from "../../data/ForecastData";
 import { useApplicationDimensions } from "../../hooks/useApplicationDimensions";
 import { ForecastType } from "../../models/Weather";
@@ -19,29 +21,37 @@ import WindWidget from "../forecast/widgets/WindWidget";
 import { ForecastSheetBackground } from "./ForecastSheetBackground";
 import { ForecastControl } from "./elements/ForecastControl";
 import { Separator } from "./elements/Separator";
-import {useAnimatedReaction, useSharedValue} from "react-native-reanimated";
 
 export function ForecastSheet() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const { width, height } = useApplicationDimensions();
   const snapPoints = ["38.5%", "83%"];
   const firstSnapPoint = height * (parseFloat(snapPoints[0]) / 100);
+  const secondSnapPoint = height * (parseFloat(snapPoints[1]) / 100);
+  const minY = height - secondSnapPoint;
+  const maxY = height - firstSnapPoint;
   const cornerRadius = 44;
   const capsuleRadius = 30;
   const capsuleHeight = height * 0.17;
   const capsuleWidth = width * 0.15;
   const [selectedForecastType, setSelectedForecastType] =
     useState<ForecastType>(ForecastType.Hourly);
-  const currentPosition = useSharedValue(0)
-
+  const currentPosition = useSharedValue(0);
   const smallWidgetSize = width * 0.4;
-  
-  useAnimatedReaction(() => {
-    return currentPosition.value;
-  }, (cv) => {
-    console.log(cv)
-  })
-  
+  const animatedPosition = useForecastSheetPosition();
+  const normalizePosition = (position: number) => {
+    "worklet";
+    return ((position - maxY) / (maxY - minY)) * -1;
+  };
+
+  useAnimatedReaction(
+    () => {
+      return currentPosition.value;
+    },
+    (cv) => {
+      animatedPosition.value = normalizePosition(cv);
+    },
+  );
 
   // callbacks
   const handleSheetChanges = useCallback((index: number) => {

@@ -1,4 +1,5 @@
 import { Canvas, LinearGradient, Rect, vec } from "@shopify/react-native-skia";
+import React from "react";
 import {
   Image,
   ImageBackground,
@@ -6,14 +7,64 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedReaction,
+  useAnimatedRef,
+  useAnimatedStyle,
+} from "react-native-reanimated";
+import { useForecastSheetPosition } from "../context/ForecastSheetContext";
 import { useApplicationDimensions } from "../hooks/useApplicationDimensions";
 
 export function HomeBackground() {
   const dimensions = useApplicationDimensions();
   const { width, height } = dimensions;
-  const myStyles = styles(dimensions);
+
   const smokeHeight = height * 0.6;
   const smokeOffsetY = height * 0.4;
+  const animatedPosition = useForecastSheetPosition();
+  const containerRef = useAnimatedRef<Animated.View>();
+
+  const AnimatedImgBkg = Animated.createAnimatedComponent(ImageBackground);
+  const AnimatedCanvas = Animated.createAnimatedComponent(Canvas);
+
+  const myStyles = styles(dimensions);
+
+  const animatedImgBkgStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: interpolate(
+            animatedPosition.value,
+            [0, 1],
+            [0, -height],
+            Extrapolation.CLAMP,
+          ),
+        },
+      ],
+    };
+  });
+
+  const animatedCanvasSmokeStyles = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(
+        animatedPosition.value,
+        [0, 0.1],
+        [1, 0],
+        Extrapolation.CLAMP,
+      ),
+    };
+  });
+
+  useAnimatedReaction(
+    () => {
+      return animatedPosition.value;
+    },
+    (cv) => {
+      console.log(cv);
+    },
+  );
 
   return (
     <View style={{ ...StyleSheet.absoluteFillObject }}>
@@ -26,17 +77,20 @@ export function HomeBackground() {
           />
         </Rect>
       </Canvas>
-      <ImageBackground
+      <AnimatedImgBkg
         source={require("../assets/home/Background.png")}
         resizeMode="cover"
-        style={myStyles.imageBackground}
+        style={[myStyles.imageBackground, animatedImgBkgStyles]}
       >
         <Canvas
-          style={{
-            height: smokeHeight,
-            ...StyleSheet.absoluteFillObject,
-            top: smokeOffsetY,
-          }}
+          style={[
+            animatedCanvasSmokeStyles,
+            {
+              height: smokeHeight,
+              ...StyleSheet.absoluteFillObject,
+              top: smokeOffsetY,
+            },
+          ]}
         >
           <Rect x={0} y={0} width={width} height={smokeHeight}>
             <LinearGradient
@@ -52,7 +106,7 @@ export function HomeBackground() {
           resizeMode="cover"
           style={myStyles.houseImage}
         />
-      </ImageBackground>
+      </AnimatedImgBkg>
     </View>
   );
 }
