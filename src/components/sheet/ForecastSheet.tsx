@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated'
 import { useForecastSheetPosition } from '../../context/ForecastSheetContext'
-import { hourly, weekly } from '../../data/ForecastData'
+import { useWeatherData } from '../../context/WeatherDataContext'
 import { useApplicationDimensions } from '../../hooks/useApplicationDimensions'
 import { ForecastType } from '../../models/Weather'
 import { ForecastScroll } from '../forecast/ForecastScroll'
@@ -30,6 +30,9 @@ import { Separator } from './elements/Separator'
 export function ForecastSheet() {
   const bottomSheetRef = useRef<BottomSheet>(null)
   const { width, height } = useApplicationDimensions()
+  const {
+    weatherData: { hourlyForecast, weeklyForecast },
+  } = useWeatherData()
   const firstValue = Dimensions.get('window').height * 0.385
   const secondValue = Dimensions.get('window').height * 0.83
   const snapPoints = useMemo(() => [firstValue, secondValue], [])
@@ -125,7 +128,7 @@ export function ForecastSheet() {
                 capsuleWidth={capsuleWidth}
                 capsuleHeight={capsuleHeight}
                 capsuleRadius={capsuleRadius}
-                forecasts={hourly}
+                forecasts={hourlyForecast}
               />
             </Animated.View>
 
@@ -134,7 +137,7 @@ export function ForecastSheet() {
                 capsuleWidth={capsuleWidth}
                 capsuleHeight={capsuleHeight}
                 capsuleRadius={capsuleRadius}
-                forecasts={weekly}
+                forecasts={weeklyForecast}
               />
             </Animated.View>
           </View>
