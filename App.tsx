@@ -2,10 +2,11 @@ import { NavigationContainer } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
 import 'react-native-gesture-handler'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { WeatherDataProvider } from './src/context/WeatherDataContext'
 import { RootNavigator } from './src/navigators/RootNavigator'
 
 SplashScreen.preventAutoHideAsync()
@@ -27,12 +28,14 @@ export function App() {
 
   return (
     <SafeAreaProvider onLayout={onLayoutRooView}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer>
-          <RootNavigator />
-        </NavigationContainer>
-        <StatusBar style="light" />
-      </GestureHandlerRootView>
+      <WeatherDataProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <NavigationContainer>
+            <RootNavigator />
+          </NavigationContainer>
+          <StatusBar style="light" />
+        </GestureHandlerRootView>
+      </WeatherDataProvider>
     </SafeAreaProvider>
   )
 }
