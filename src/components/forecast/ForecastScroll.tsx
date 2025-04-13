@@ -22,6 +22,7 @@ export function ForecastScroll({
       horizontal
       style={styles.scrollView}
       contentContainerStyle={{ paddingHorizontal: 20 }}
+      showsHorizontalScrollIndicator={false}
     >
       <View style={styles.container}>
         {forecasts.map((forecast, i) => (
