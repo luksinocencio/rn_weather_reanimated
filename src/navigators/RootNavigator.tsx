@@ -8,8 +8,8 @@ const { Navigator, Screen } = createNativeStackNavigator()
 export function RootNavigator() {
   return (
     <Navigator screenOptions={{ headerShown: false }}>
-      <Screen name="list" component={WeatherList} />
       <Screen name="home" component={Home} />
+      <Screen name="list" component={WeatherList} />
     </Navigator>
   )
 }

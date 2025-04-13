@@ -53,7 +53,7 @@ export function WeatherList() {
               alignItems: 'center',
             }}
           >
-            <Pressable onPress={() => navigation.navigate('home')}>
+            <Pressable onPress={() => navigation.goBack()}>
               <Ionicons
                 name="chevron-back"
                 size={34}
