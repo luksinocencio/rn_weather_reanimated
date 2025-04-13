@@ -2,6 +2,7 @@ import { ParamListBase, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Pressable, StyleSheet, View } from 'react-native'
 import { useApplicationDimensions } from '../../../hooks/useApplicationDimensions'
+import { eventEmitter } from '../../../utils/EventEmitter'
 import { ListIcon } from '../icons/ListIcon'
 import { MapIcon } from '../icons/MapIcon'
 import { CircleButton } from './CircleButton'
@@ -19,7 +20,9 @@ export function TabbarItems() {
 
   return (
     <View style={myStyles.container}>
-      <MapIcon />
+      <Pressable onPress={() => eventEmitter.emit('locationEvent')}>
+        <MapIcon />
+      </Pressable>
       <TrapezoidBackground width={trapezoidWidth} height={trapezoidHeight} />
       <Pressable style={myStyles.pressablePlus}>
         {({ pressed }) => (
