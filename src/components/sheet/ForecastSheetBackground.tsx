@@ -6,10 +6,13 @@ import {
   vec,
 } from '@shopify/react-native-skia'
 import { BlurView } from 'expo-blur'
-import { Animated, Platform, StyleSheet } from 'react-native'
-import { interpolateColor, useAnimatedStyle } from 'react-native-reanimated'
+import React from 'react'
+import { StyleSheet } from 'react-native'
+import Animated, {
+  interpolateColor,
+  useAnimatedStyle,
+} from 'react-native-reanimated'
 import { useForecastSheetPosition } from '../../context/ForecastSheetContext'
-
 interface ForecastSheetBackgroundProps {
   width: number
   height: number
@@ -22,37 +25,34 @@ export function ForecastSheetBackground({
   cornerRadius,
 }: ForecastSheetBackgroundProps) {
   const borderPath = `M 0 ${cornerRadius}
-  A ${cornerRadius} ${cornerRadius} 0 0 1 ${cornerRadius} 0
-  H ${width - cornerRadius}
-  A ${cornerRadius} ${cornerRadius} 0 0 1 ${width} ${cornerRadius}`
+                    A ${cornerRadius} ${cornerRadius} 0 0 1 ${cornerRadius} 0
+                    H ${width - cornerRadius}
+                    A ${cornerRadius} ${cornerRadius} 0 0 1 ${width} ${cornerRadius}`
 
   const AnimatedBlurView = Animated.createAnimatedComponent(BlurView)
   const animatedPosition = useForecastSheetPosition()
-  const blurViewStyle = useAnimatedStyle(() => {
+  const blurViewStyles = useAnimatedStyle(() => {
     return {
       backgroundColor: interpolateColor(
         animatedPosition.value,
         [0, 0.5],
-        ['transparent', '#422e5a'],
+        ['transparent', '#422E5A'],
       ),
     }
   })
 
   return (
     <AnimatedBlurView
-      intensity={50}
-      tint="dark"
-      {...(Platform.OS === 'android' && {
-        experimentalBlurMethod: 'dimezisBlurView',
-      })}
       style={[
         {
           ...StyleSheet.absoluteFillObject,
           borderRadius: cornerRadius,
           overflow: 'hidden',
         },
-        blurViewStyle,
+        blurViewStyles,
       ]}
+      intensity={50}
+      tint="dark"
     >
       <Canvas style={{ flex: 1 }}>
         <RoundedRect x={0} y={0} width={width} height={height} r={cornerRadius}>
@@ -63,7 +63,12 @@ export function ForecastSheetBackground({
             positions={[-0.04, 0.95]}
           />
         </RoundedRect>
-        <Path path={borderPath} style="stroke" strokeWidth={2} color="white">
+        <Path
+          path={borderPath}
+          style={'stroke'}
+          strokeWidth={2}
+          color={'white'}
+        >
           <LinearGradient
             start={vec(width / 2, 0)}
             end={vec(width / 2, cornerRadius)}
@@ -74,3 +79,5 @@ export function ForecastSheetBackground({
     </AnimatedBlurView>
   )
 }
+
+const styles = StyleSheet.create({})

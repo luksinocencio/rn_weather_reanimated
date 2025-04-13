@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Dimensions, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
-import {
+import Animated, {
   useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
@@ -52,7 +52,6 @@ export function ForecastSheet() {
       transform: [{ translateX: translateXHourly.value }],
     }
   })
-
   const animatedWeeklyStyles = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: translateXWeekly.value }],
@@ -120,14 +119,25 @@ export function ForecastSheet() {
           style={{ flex: 1 }}
           contentContainerStyle={{ paddingBottom: 10 }}
         >
-          <ForecastScroll
-            capsuleWidth={capsuleWidth}
-            capsuleHeight={capsuleHeight}
-            capsuleRadius={capsuleRadius}
-            forecasts={
-              selectedForecastType === ForecastType.Hourly ? hourly : weekly
-            }
-          />
+          <View style={{ flexDirection: 'row' }}>
+            <Animated.View style={[animatedHourlyStyles]}>
+              <ForecastScroll
+                capsuleWidth={capsuleWidth}
+                capsuleHeight={capsuleHeight}
+                capsuleRadius={capsuleRadius}
+                forecasts={hourly}
+              />
+            </Animated.View>
+
+            <Animated.View style={[animatedWeeklyStyles]}>
+              <ForecastScroll
+                capsuleWidth={capsuleWidth}
+                capsuleHeight={capsuleHeight}
+                capsuleRadius={capsuleRadius}
+                forecasts={weekly}
+              />
+            </Animated.View>
+          </View>
           <View style={{ flex: 1, paddingTop: 30, paddingBottom: 50 }}>
             <AirQualityWidget width={width - 30} height={150} />
             <View
