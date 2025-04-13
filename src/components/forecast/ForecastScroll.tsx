@@ -1,14 +1,14 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-import { Forecast } from "../../models/Weather";
-import { ForecastCapsule } from "./ForecastCapsule";
+import React from 'react'
+import { StyleSheet, View } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
+import { Forecast } from '../../models/Weather'
+import { ForecastCapsule } from './ForecastCapsule'
 
 interface ForecastScrollProps {
-  forecasts: Forecast[];
-  capsuleWidth: number;
-  capsuleHeight: number;
-  capsuleRadius: number;
+  forecasts: Forecast[]
+  capsuleWidth: number
+  capsuleHeight: number
+  capsuleRadius: number
 }
 
 export function ForecastScroll({
@@ -18,7 +18,11 @@ export function ForecastScroll({
   capsuleRadius,
 }: ForecastScrollProps) {
   return (
-    <ScrollView horizontal style={styles.scrollView}>
+    <ScrollView
+      horizontal
+      style={styles.scrollView}
+      contentContainerStyle={{ paddingHorizontal: 20 }}
+    >
       <View style={styles.container}>
         {forecasts.map((forecast, i) => (
           <ForecastCapsule
@@ -31,19 +35,17 @@ export function ForecastScroll({
         ))}
       </View>
     </ScrollView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   scrollView: {
-    paddingLeft: 20,
-    paddingRight: 20,
     paddingTop: 20,
     paddingBottom: 10,
   },
   container: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 12,
   },
-});
+})

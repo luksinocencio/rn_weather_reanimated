@@ -1,9 +1,14 @@
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { Dimensions, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
-import { useAnimatedReaction, useSharedValue } from 'react-native-reanimated'
+import {
+  useAnimatedReaction,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated'
 import { useForecastSheetPosition } from '../../context/ForecastSheetContext'
 import { hourly, weekly } from '../../data/ForecastData'
 import { useApplicationDimensions } from '../../hooks/useApplicationDimensions'
@@ -39,6 +44,31 @@ export function ForecastSheet() {
   const currentPosition = useSharedValue(0)
   const smallWidgetSize = width * 0.4
   const animatedPosition = useForecastSheetPosition()
+
+  const translateXHourly = useSharedValue(0)
+  const translateXWeekly = useSharedValue(width)
+  const animatedHourlyStyles = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: translateXHourly.value }],
+    }
+  })
+
+  const animatedWeeklyStyles = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: translateXWeekly.value }],
+    }
+  })
+
+  useEffect(() => {
+    if (selectedForecastType === ForecastType.Weekly) {
+      translateXHourly.value = withTiming(-width)
+      translateXWeekly.value = withTiming(-width)
+    } else {
+      translateXHourly.value = withTiming(0)
+      translateXWeekly.value = withTiming(width)
+    }
+  }, [selectedForecastType])
+
   const normalizePosition = (position: number) => {
     'worklet'
     return ((position - maxY) / (maxY - minY)) * -1
