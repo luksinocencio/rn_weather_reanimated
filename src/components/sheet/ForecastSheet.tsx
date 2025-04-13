@@ -1,10 +1,9 @@
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
-import React, { useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 
-import { View } from 'react-native'
+import { Dimensions, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { useAnimatedReaction, useSharedValue } from 'react-native-reanimated'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useForecastSheetPosition } from '../../context/ForecastSheetContext'
 import { hourly, weekly } from '../../data/ForecastData'
 import { useApplicationDimensions } from '../../hooks/useApplicationDimensions'
@@ -26,11 +25,11 @@ import { Separator } from './elements/Separator'
 export function ForecastSheet() {
   const bottomSheetRef = useRef<BottomSheet>(null)
   const { width, height } = useApplicationDimensions()
-  const snapPoints = ['38.5%', '83%']
-  const firstSnapPoint = height * (parseFloat(snapPoints[0]) / 100)
-  const secondSnapPoint = height * (parseFloat(snapPoints[1]) / 100)
-  const minY = height - secondSnapPoint
-  const maxY = height - firstSnapPoint
+  const firstValue = Dimensions.get('window').height * 0.385
+  const secondValue = Dimensions.get('window').height * 0.83
+  const snapPoints = useMemo(() => [firstValue, secondValue], [])
+  const minY = height - secondValue
+  const maxY = height - firstValue
   const cornerRadius = 44
   const capsuleRadius = 30
   const capsuleHeight = height * 0.17
@@ -45,8 +44,6 @@ export function ForecastSheet() {
     return ((position - maxY) / (maxY - minY)) * -1
   }
 
-  const insents = useSafeAreaInsets()
-
   useAnimatedReaction(
     () => {
       return currentPosition.value
@@ -56,8 +53,18 @@ export function ForecastSheet() {
     },
   )
 
+  const handleSheetChange = useCallback((index: number) => {
+    if (index < 0) {
+      bottomSheetRef.current?.snapToIndex(0)
+    }
+    if (index > 1) {
+      bottomSheetRef.current?.snapToIndex(1)
+    }
+  }, [])
+
   return (
     <BottomSheet
+      ref={bottomSheetRef}
       snapPoints={snapPoints}
       animatedPosition={currentPosition}
       animateOnMount={false}
@@ -66,15 +73,15 @@ export function ForecastSheet() {
         height: 5,
         backgroundColor: 'rgba(0,0,0,0.3)',
       }}
-      ref={bottomSheetRef}
       backgroundComponent={() => (
         <ForecastSheetBackground
           width={width}
-          height={firstSnapPoint}
+          height={firstValue}
           cornerRadius={cornerRadius}
         />
       )}
-      topInset={insents.top}
+      enableOverDrag={false}
+      onChange={handleSheetChange}
     >
       <BottomSheetView style={{ flex: 1 }}>
         <ForecastControl onPress={(type) => setSelectedForecastType(type)} />

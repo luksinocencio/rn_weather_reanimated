@@ -1,60 +1,187 @@
-import { StyleSheet, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Weather } from "../../models/Weather";
-import { DEGREE_SYMBOL } from "../../utils/Constants";
+import { StyleSheet } from 'react-native'
+import Animated, {
+  Extrapolation,
+  interpolate,
+  interpolateColor,
+  useAnimatedStyle,
+} from 'react-native-reanimated'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useForecastSheetPosition } from '../../context/ForecastSheetContext'
+import { Weather } from '../../models/Weather'
+import { DEGREE_SYMBOL } from '../../utils/Constants'
 
 export interface WeatherInfoProps {
-  weather: Weather;
+  weather: Weather
 }
 
-export function WeatherInfo({weather}: WeatherInfoProps) {
-  const {city, temperature, condition, high, low} = weather;
-  const {top} = useSafeAreaInsets()
-  const weatherInfoMargin = top + 51
-  const myStyles = styles({weatherInfoMargin})
+export function WeatherInfo({ weather }: WeatherInfoProps) {
+  const { city, temperature, condition, high, low } = weather
+  const { top } = useSafeAreaInsets()
+  const topMargin = 51
+  const weatherInfoMargin = top + topMargin
+  const animatedPosition = useForecastSheetPosition()
+
+  const clamp = (value: number, min = 0, max = 1) => {
+    'worklet'
+    return Math.max(min, Math.min(value, max))
+  }
+
+  const animatedViewStyle = useAnimatedStyle(() => {
+    const clampedValue = clamp(animatedPosition.value)
+    return {
+      transform: [
+        {
+          translateY: interpolate(
+            clampedValue,
+            [0, 1],
+            [0, -topMargin],
+            Extrapolation.CLAMP,
+          ),
+        },
+      ],
+    }
+  })
+
+  const animatedTempTxtStyles = useAnimatedStyle(() => {
+    const clampedValue = clamp(animatedPosition.value)
+    const fontFamily = clampedValue > 0.5 ? 'SF-Semibold' : 'SF-Thin'
+
+    return {
+      fontFamily,
+      opacity: interpolate(
+        clampedValue,
+        [0, 0.5, 1],
+        [1, 0, 1],
+        Extrapolation.CLAMP,
+      ),
+      fontSize: interpolate(
+        clampedValue,
+        [0, 1],
+        [96, 20],
+        Extrapolation.CLAMP,
+      ),
+      lineHeight: interpolate(
+        clampedValue,
+        [0, 1],
+        [96, 20],
+        Extrapolation.CLAMP,
+      ),
+      color: interpolateColor(
+        clampedValue,
+        [0, 1],
+        ['white', 'rgba(235,235,245,0.6)'],
+        'RGB',
+      ),
+    }
+  })
+
+  const animatedMinMaxTxtStyles = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(animatedPosition.value, [0, 0.5], [1, 0]),
+    }
+  })
+
+  const animatedSeperatorTxtStyle = useAnimatedStyle(() => {
+    const display = animatedPosition.value > 0.5 ? 'flex' : 'none'
+    return {
+      display,
+      opacity: interpolate(animatedPosition.value, [0, 0.5, 1], [0, 0, 1]),
+    }
+  })
+
+  const animatedTempConditionStyles = useAnimatedStyle(() => {
+    const flexDirection = animatedPosition.value > 0.5 ? 'row' : 'column'
+    return {
+      flexDirection,
+    }
+  })
+
+  const animatedConditionTxtStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateY: interpolate(
+            animatedPosition.value,
+            [0, 0.5, 1],
+            [0, -20, 0],
+            Extrapolation.CLAMP,
+          ),
+        },
+      ],
+    }
+  })
 
   return (
-    <View style={myStyles.container}>
-      <Text style={myStyles.cityText}>{city}</Text>
-      <Text style={myStyles.temperatureText}>{temperature}</Text>
-      <Text style={myStyles.conditionText}>{condition}</Text>
-      <Text style={myStyles.minMaxText}>H:{high}{DEGREE_SYMBOL} L:{low}{DEGREE_SYMBOL}</Text>
-    </View>
-  );
+    <Animated.View
+      style={[
+        { alignItems: 'center', marginTop: weatherInfoMargin },
+        animatedViewStyle,
+      ]}
+    >
+      <Animated.Text style={styles.cityText}>{city}</Animated.Text>
+      <Animated.View
+        style={[{ alignItems: 'center' }, animatedTempConditionStyles]}
+      >
+        <Animated.View style={[{ flexDirection: 'row' }]}>
+          <Animated.Text
+            style={[styles.temperatureText, animatedTempTxtStyles]}
+          >
+            {temperature}
+            {DEGREE_SYMBOL}
+          </Animated.Text>
+          <Animated.Text
+            style={[styles.seperatorText, animatedSeperatorTxtStyle]}
+          >
+            |
+          </Animated.Text>
+        </Animated.View>
+
+        <Animated.Text
+          style={[styles.conditionText, animatedConditionTxtStyle]}
+        >
+          {condition}
+        </Animated.Text>
+      </Animated.View>
+      <Animated.Text style={[styles.minMaxText, animatedMinMaxTxtStyles]}>
+        H:{high}
+        {DEGREE_SYMBOL} L:{low}
+        {DEGREE_SYMBOL}
+      </Animated.Text>
+    </Animated.View>
+  )
 }
 
-interface WeatherInfoStylesProps {
-  weatherInfoMargin: number;
-}
-
-const styles = ({weatherInfoMargin}: WeatherInfoStylesProps) => StyleSheet.create({
-  container: {
-    marginTop: weatherInfoMargin,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+const styles = StyleSheet.create({
   cityText: {
     fontFamily: 'SF-Regular',
     color: 'white',
     fontSize: 34,
-    lineHeight: 41
+    lineHeight: 41,
   },
   temperatureText: {
     fontFamily: 'SF-Thin',
-    color: 'white',
     fontSize: 96,
-    lineHeight: 96
+    color: 'white',
+    lineHeight: 96,
+  },
+  seperatorText: {
+    fontFamily: 'SF-Semibold',
+    fontSize: 20,
+    color: 'rgba(235,235,245,0.6)',
+    lineHeight: 20,
+    marginHorizontal: 2,
+    display: 'none',
   },
   conditionText: {
     fontFamily: 'SF-Semibold',
     fontSize: 20,
-    color: 'rgba(235, 235, 245, 0.6)',
-    lineHeight: 20
+    color: 'rgba(235,235,245,0.6)',
+    lineHeight: 20,
   },
   minMaxText: {
     fontFamily: 'SF-Semibold',
     fontSize: 20,
     color: 'white',
-    lineHeight: 20
-  }
+    lineHeight: 20,
+  },
 })
