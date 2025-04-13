@@ -51,6 +51,7 @@ export function ForecastSheetBackground({
         },
         blurViewStyles,
       ]}
+      experimentalBlurMethod={'dimezisBlurView'}
       intensity={50}
       tint="dark"
     >

@@ -1,36 +1,40 @@
-import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
-import { useCallback } from "react";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Home } from "./src/screens/Home";
+import { NavigationContainer } from '@react-navigation/native'
+import { useFonts } from 'expo-font'
+import * as SplashScreen from 'expo-splash-screen'
+import { StatusBar } from 'expo-status-bar'
+import { useCallback } from 'react'
+import 'react-native-gesture-handler'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { RootNavigator } from './src/navigators/RootNavigator'
 
-SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync()
 
 export function App() {
   const [fontsLoaded] = useFonts({
-    "SF-Thin": require("./src/assets/fonts/SF-Pro-Display-Thin.otf"),
-    "SF-Regular": require("./src/assets/fonts/SF-Pro-Display-Regular.otf"),
-    "SF-Semibold": require("./src/assets/fonts/SF-Pro-Display-Semibold.otf"),
-  });
+    'SF-Thin': require('./src/assets/fonts/SF-Pro-Display-Thin.otf'),
+    'SF-Regular': require('./src/assets/fonts/SF-Pro-Display-Regular.otf'),
+    'SF-Semibold': require('./src/assets/fonts/SF-Pro-Display-Semibold.otf'),
+  })
 
   const onLayoutRooView = useCallback(() => {
     if (fontsLoaded) {
-      SplashScreen.hideAsync();
+      SplashScreen.hideAsync()
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded])
 
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded) return null
 
   return (
     <SafeAreaProvider onLayout={onLayoutRooView}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <Home />
+        <NavigationContainer>
+          <RootNavigator />
+        </NavigationContainer>
         <StatusBar style="light" />
       </GestureHandlerRootView>
     </SafeAreaProvider>
-  );
+  )
 }
 
 // import React from "react";
