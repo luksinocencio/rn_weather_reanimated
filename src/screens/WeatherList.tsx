@@ -9,11 +9,19 @@ import {
   vec,
 } from '@shopify/react-native-skia'
 import React from 'react'
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native'
-import { TextInput } from 'react-native-gesture-handler'
+import {
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { BackgroundGradient } from '../components/BackgroundGradient'
 import { WeatherWidget } from '../components/WeatherWidget'
+import { ForecastList } from '../data/ForecastData'
 import { useApplicationDimensions } from '../hooks/useApplicationDimensions'
 
 export function WeatherList() {
@@ -30,7 +38,7 @@ export function WeatherList() {
   return (
     <>
       <BackgroundGradient />
-      <View style={{ paddingTop: spaceFromTop }}>
+      <View style={{ paddingTop: spaceFromTop, flex: 1 }}>
         <View
           style={{
             flexDirection: 'row',
@@ -82,14 +90,23 @@ export function WeatherList() {
               style={styles.searchInput}
               cursorColor={'rgba(235, 235, 246,0.6)'}
               underlineColorAndroid="transparent"
-              multiline={false}
-              scrollEnabled={false}
             />
           </View>
         </View>
-        <View style={{ flex: 1 }}>
-          <WeatherWidget />
-        </View>
+
+        <ScrollView
+          style={{ flex: 1, paddingTop: 20 }}
+          contentContainerStyle={{
+            alignItems: 'center',
+            gap: 20,
+            paddingBottom: 100,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          {ForecastList.map((forecast, index) => (
+            <WeatherWidget forecast={forecast} key={index} />
+          ))}
+        </ScrollView>
       </View>
     </>
   )
@@ -109,5 +126,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     paddingHorizontal: 10,
     paddingVertical: 10,
+    height: 50,
   },
 })

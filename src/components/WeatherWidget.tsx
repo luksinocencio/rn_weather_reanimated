@@ -9,11 +9,18 @@ import {
   vec,
 } from '@shopify/react-native-skia'
 import React from 'react'
-import { Pressable, StyleSheet } from 'react-native'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import { useSharedValue, withTiming } from 'react-native-reanimated'
 import { useApplicationDimensions } from '../hooks/useApplicationDimensions'
+import { Forecast } from '../models/Weather'
+import { DEGREE_SYMBOL } from '../utils/Constants'
 
-export function WeatherWidget() {
+interface WeatherWidgetProps {
+  forecast: Forecast
+}
+
+export function WeatherWidget({ forecast }: WeatherWidgetProps) {
+  const { temperature, high, low, location, icon, weather } = forecast
   const { width } = useApplicationDimensions()
   const widgetWidth = width * 0.876
   const widgetHeight = widgetWidth / 1.95
@@ -58,6 +65,66 @@ export function WeatherWidget() {
           </Path>
         </FitBox>
       </Canvas>
+      <View style={{ flex: 1, paddingTop: 40, paddingLeft: 20 }}>
+        <Text style={styles.temperatureText}>
+          {temperature}
+          {DEGREE_SYMBOL}
+        </Text>
+        <Image
+          source={icon}
+          style={{
+            width: 160,
+            height: 160,
+            ...StyleSheet.absoluteFillObject,
+            left: widgetWidth - 160,
+            top: -30,
+          }}
+        />
+        <View style={{ paddingTop: 10 }}>
+          <Text style={styles.highLowText}>
+            H:{high}
+            {DEGREE_SYMBOL} L:{low}
+            {DEGREE_SYMBOL}
+          </Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingRight: 24,
+            }}
+          >
+            <Text style={styles.locationText}>{location}</Text>
+            <Text style={styles.weatherText}>{weather}</Text>
+          </View>
+        </View>
+      </View>
     </Pressable>
   )
 }
+
+const styles = StyleSheet.create({
+  temperatureText: {
+    fontFamily: 'SF-Regular',
+    fontSize: 64,
+    lineHeight: 64,
+    color: 'white',
+  },
+  highLowText: {
+    fontFamily: 'SF-Regular',
+    fontSize: 13,
+    lineHeight: 18,
+    color: 'rgba(235, 235, 246, 0.6)',
+  },
+  locationText: {
+    fontFamily: 'SF-Regular',
+    fontSize: 17,
+    lineHeight: 22,
+    color: 'white',
+  },
+  weatherText: {
+    fontFamily: 'SF-Regular',
+    fontSize: 13,
+    lineHeight: 18,
+    color: 'white',
+  },
+})
