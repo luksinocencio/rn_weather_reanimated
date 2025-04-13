@@ -18,6 +18,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { useForecastSheetPosition } from '../context/ForecastSheetContext'
 import { useApplicationDimensions } from '../hooks/useApplicationDimensions'
+import { BackgroundGradient } from './BackgroundGradient'
 
 const HomeBackground = () => {
   const dimensions = useApplicationDimensions()
@@ -72,15 +73,7 @@ const HomeBackground = () => {
 
   return (
     <View style={StyleSheet.absoluteFill}>
-      <Canvas style={StyleSheet.absoluteFill}>
-        <Rect x={0} y={0} width={width} height={height}>
-          <LinearGradient
-            start={vec(0, 0)}
-            end={vec(width, height)}
-            colors={bkgColors}
-          />
-        </Rect>
-      </Canvas>
+      <BackgroundGradient colors={bkgColors} />
 
       {/* ✅ Animated View envolvendo o ImageBackground */}
       <Animated.View style={[{ flex: 1 }, animatedImgBkgStyles]}>
