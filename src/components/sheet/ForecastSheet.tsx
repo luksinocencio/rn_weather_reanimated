@@ -114,6 +114,7 @@ export function ForecastSheet() {
       )}
       enableOverDrag={false}
       onChange={handleSheetChange}
+      enableDynamicSizing={false}
     >
       <BottomSheetView style={{ flex: 1 }}>
         <ForecastControl onPress={(type) => setSelectedForecastType(type)} />
@@ -121,6 +122,7 @@ export function ForecastSheet() {
         <ScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{ paddingBottom: 10 }}
+          showsVerticalScrollIndicator={false}
         >
           <View style={{ flexDirection: 'row' }}>
             <Animated.View style={[animatedHourlyStyles]}>
